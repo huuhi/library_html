@@ -1,7 +1,8 @@
 <script lang="js" setup>
-import { ref, reactive ,onMounted} from 'vue'
+import { ref, reactive ,onMounted,nextTick} from 'vue'
 import { ElMessage } from 'element-plus'
-// import { changPassword } from '@/api/use'
+import { changPassword } from '@/api/userApi'
+import  parseJwt  from '@/utils/parseJwt';
 
 const centerDialogVisible = ref(false)
 const id=ref();
@@ -9,12 +10,12 @@ const username=ref();
 const image=ref('');
 
 
-// const handleOpen = (key, keyPath) => {
-//   console.log(key, keyPath)
-// }
-// const handleClose = (key, keyPath) => {
-//   console.log(key, keyPath)
-// }
+const handleOpen = (key, keyPath) => {
+  console.log(key, keyPath)
+}
+const handleClose = (key, keyPath) => {
+  console.log(key, keyPath)
+}
 // 退出登录
 const login = () => {
   // 跳转登录页面
@@ -28,26 +29,27 @@ const login = () => {
   //
 }
 // localStorage.getItem('user')
-const parseJwt=(token)=> {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+// const parseJwt=(token)=> {
+//     try {
+//         const base64Url = token.split('.')[1];
+//         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+//             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+//         }).join(''));
 
-        return JSON.parse(jsonPayload);
-    } catch (err) {
-        console.error('Failed to parse JWT:', err);
-        return null;
-    }
-}
+//         return JSON.parse(jsonPayload);
+//     } catch (err) {
+//         console.error('Failed to parse JWT:', err);
+//         return null;
+//     }
+// }
 // 修改密码
 
 onMounted(()=>{
   const token=localStorage.getItem('user')
   const claim=parseJwt(token)
-  id.value=claim.id;
+  console.log(claim)
+  id.value=claim.userId;
   image.value=localStorage.getItem('image');
   console.log(image.value)
 })
@@ -90,30 +92,28 @@ const pwdRules = reactive({
 
 // 提交修改
 const submitPwd = async () => {
-  // try {
-  //   await nextTick();
-  //   console.log('提交修改', pwdForm)
-  //   // 表单验证
-  //   await pwdFormRef.value.validate()
+  try {
+    await nextTick();
+    console.log('提交修改', pwdForm)
+    // 表单验证
+    await pwdFormRef.value.validate()
 
-  //   // 模拟API请求 - 用户需替换为真实请求
-  //   console.log(id.value,pwdForm.oldPassword,pwdForm.newPassword)
-  //   const res = await changPassword(id.value,pwdForm.oldPassword,pwdForm.newPassword)
+    console.log(id.value,pwdForm.oldPassword,pwdForm.newPassword,id.value)
+    const res = await changPassword(id.value,pwdForm.oldPassword,pwdForm.newPassword)
 
-  //   if (res.code) {
-  //     ElMessage.success('修改成功，请重新登录')
-  //     pwdDialogVisible.value = false
-  //     // 跳转登录
-  //     setTimeout(() => {
-  //       window.location.href = '/login'
-  //     }, 1000)
-  //   } else {
-  //     ElMessage.error(res.msg)
-  //   }
-  // } catch (e) {
-  //   console.log('表单验证失败', e)
-  // }
-  ElMessage.success('修改成功，请重新登录')
+    if (res.code) {
+      ElMessage.success('修改成功，请重新登录')
+      pwdDialogVisible.value = false
+      // 跳转登录
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1000)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  } catch (e) {
+    console.log('表单验证失败', e)
+  }
 }
 
 // 模拟修改密码API
@@ -162,7 +162,7 @@ const resetForm = () => {
           <!-- 左侧菜单栏 -->
           <el-menu router="true">
             <!-- 首页菜单 -->
-            <el-menu-item index="/books">
+            <el-menu-item index="/user/books">
               <el-icon><Promotion /></el-icon>
               <span>首页</span>
             </el-menu-item>

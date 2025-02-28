@@ -32,6 +32,11 @@ const userRoutes = [
         path: "profile",
         name: "UserProfile",
         component: () => import("@/views/user/UserView.vue")
+      },
+      {
+        path: "/book/:id",
+        name: "BookDetail",
+        component: ()=>import("@/views/book/BookDetail.vue"),
       }
     ]
   }
@@ -102,13 +107,13 @@ router.beforeEach((to, from, next) => {
   }
 
   // 已认证用户访问登录页 → 根据角色重定向
-  if (isAuthenticated && to.path === '/login') {
-    if (role === 'admin') {
-      return next('/manager');
-    } else {
-      return next('/user/books');
-    }
-  }
+  // if (isAuthenticated && to.path === '/login') {
+  //   if (role === 'admin') {
+  //     return next('/manager');
+  //   } else {
+  //     return next('/user/books');
+  //   }
+  // }
 
   // 权限控制：管理员可以访问管理页面，普通用户只能访问用户页面
   if (isAuthenticated) {

@@ -25,7 +25,7 @@ request.interceptors.response.use(
   (response)=>{
     if(response.data.msg==='NOT_LOGIN'){
       ElMessage.error('请先登录')
-      router.push('/login')
+      window.location.href = '/login'
     }
     return response.data
   },
