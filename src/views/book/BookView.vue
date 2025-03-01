@@ -78,7 +78,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Search, Picture } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { searchBooksApi } from '@/api/booksApi';

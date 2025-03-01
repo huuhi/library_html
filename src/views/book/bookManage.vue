@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, reactive ,} from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { searchBooksApi, addBookApi, updateBookApi, deleteBookApi } from '@/api/booksApi';
@@ -22,12 +22,12 @@ const bookForm = reactive({
   id: null,
   name: '',
   author: '',
-  clazzid: null,
+  clazzId: null,
   publishId: null,
   isbn: '',
   profile: '',
   publishDate: '',
-  addressid: null,
+  addressId: null,
   status: 1,
   image: ''
 });
@@ -35,15 +35,15 @@ const bookForm = reactive({
 const rules = {
   name: [{ required: true, message: '请输入书名', trigger: 'blur' }],
   author: [{ required: true, message: '请输入作者', trigger: 'blur' }],
-  clazzid: [{ required: true, message: '请选择分类', trigger: 'change' }],
+  clazzId: [{ required: true, message: '请选择分类', trigger: 'change' }],
   publishDate: [{ required: true, message: '请选择出版日期', trigger: 'change' }],
-  addressid: [{ required: true, message: '请选择位置', trigger: 'change' }]
+  addressId: [{ required: true, message: '请选择位置', trigger: 'change' }]
 };
 
 const fetchBooks = async () => {
   try {
     const response = await searchBooksApi('', '', currentPage.value, pageSize.value);
-    if (response.code === 1) {
+    if (response.code ) {
       books.value = response.data.records;
       total.value = response.data.total;
     } else {
@@ -74,7 +74,14 @@ const showAddBookDialog = () => {
 
 const editBook = (book) => {
   dialogTitle.value = '编辑图书';
-  Object.assign(bookForm, book);
+  const statusValue = book.status === '可借' ? 1 : 0;
+  Object.assign(bookForm, {
+    ...book,
+    clazzId: Number(book.clazzId),
+    publishId: Number(book.publishId),
+    addressId: Number(book.addressId),
+    status:  statusValue
+  });
   dialogVisible.value = true;
 };
 
@@ -86,7 +93,7 @@ const deleteBook = async (id) => {
       type: 'warning'
     });
     const response = await deleteBookApi(id);
-    if (response.code === 1) {
+    if (response.code) {
       ElMessage.success('删除成功');
       fetchBooks();
     } else {
@@ -104,12 +111,16 @@ const submitForm = async () => {
     if (valid) {
       try {
         const api = bookForm.id ? updateBookApi : addBookApi;
-// 强制转换为Number
-        bookForm.status = Number(bookForm.status === '可借' ? 1 : 0);
-        console.log(bookForm);
+        const formData = { ...bookForm };
+        formData.clazzId = Number(formData.clazzId);
+        formData.publishId = Number(formData.publishId);
+        formData.addressId = Number(formData.addressId);
+        formData.status = Number(formData.status);
 
-        const response = await api(bookForm);
-        if (response.code === 1) {
+        console.log('Submitting form data:', formData);
+
+        const response = await api(formData);
+        if (response.code ) {
           ElMessage.success(bookForm.id ? '更新成功' : '添加成功');
           dialogVisible.value = false;
           fetchBooks();
@@ -128,7 +139,7 @@ const submitForm = async () => {
 };
 
 const handleAvatarSuccess = (response, file) => {
-  bookForm.image = URL.createObjectURL(file.raw);
+  bookForm.image = response.data;
 };
 
 const beforeAvatarUpload = (file) => {
@@ -147,7 +158,7 @@ const beforeAvatarUpload = (file) => {
 const fetchCategories = async () => {
   try {
     const response = await getAllClazzApi();
-    if (response.code === 1) {
+    if (response.code) {
       categories.value = response.data;
     } else {
       ElMessage.error('获取分类列表失败');
@@ -161,7 +172,7 @@ const fetchCategories = async () => {
 const fetchPublishers = async () => {
   try {
     const response = await getPublishersApi();
-    if (response.code === 1) {
+    if (response.code) {
       publishers.value = response.data;
     } else {
       ElMessage.error('获取出版社列表失败');
@@ -208,7 +219,7 @@ onMounted(() => {
       <el-table-column prop="status" label="状态" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === '可借' ? 'success' : 'danger'">
-            {{ scope.row.status  }}
+            {{ scope.row.status }}
           </el-tag>
         </template>
       </el-table-column>
@@ -245,13 +256,13 @@ onMounted(() => {
         <el-form-item label="作者" prop="author">
           <el-input v-model="bookForm.author" />
         </el-form-item>
-        <el-form-item label="分类" prop="clazzid">
-          <el-select v-model="bookForm.clazzid" placeholder="请选择分类">
+        <el-form-item label="分类" prop="clazzId">
+          <el-select v-model.number="bookForm.clazzId" placeholder="请选择分类">
             <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="出版社" prop="publishId">
-          <el-select v-model="bookForm.publishId" placeholder="请选择出版社">
+          <el-select v-model.number="bookForm.publishId" placeholder="请选择出版社">
             <el-option v-for="publisher in publishers" :key="publisher.id" :label="publisher.name" :value="publisher.id" />
           </el-select>
         </el-form-item>
@@ -264,13 +275,13 @@ onMounted(() => {
         <el-form-item label="出版日期" prop="publishDate">
           <el-date-picker v-model="bookForm.publishDate" type="date" placeholder="选择日期" />
         </el-form-item>
-        <el-form-item label="位置" prop="addressid">
-          <el-select v-model="bookForm.addressid" placeholder="请选择位置">
+        <el-form-item label="位置" prop="addressId">
+          <el-select v-model.number="bookForm.addressId" placeholder="请选择位置">
             <el-option v-for="address in addresses" :key="address.id" :label="address.address" :value="address.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-select v-model="bookForm.status" placeholder="请选择状态">
+          <el-select v-model.number="bookForm.status" placeholder="请选择状态">
             <el-option label="可借" :value="1" />
             <el-option label="已借出" :value="0" />
           </el-select>
@@ -278,7 +289,7 @@ onMounted(() => {
         <el-form-item label="封面图片" prop="image">
           <el-upload
             class="avatar-uploader"
-            action="/api/upload"
+            action="/api/common/upload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -336,5 +347,3 @@ onMounted(() => {
   display: block;
 }
 </style>
-
-

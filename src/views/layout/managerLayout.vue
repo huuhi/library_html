@@ -3,15 +3,6 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 // import { changPassword } from '@/api/use'
-import {
-  Document,
-  Menu as IconMenu,
-  Promotion,
-  UserFilled,
-  HomeFilled,
-  Tools,
-  HelpFilled
-} from '@element-plus/icons-vue'
 
 const router = useRouter()
 const centerDialogVisible = ref(false)
@@ -174,25 +165,35 @@ const handleMenuSelect = (path) => {
             <!-- 图书管理菜单 -->
             <el-sub-menu index="/manager">
               <template #title>
-                <el-icon><IconMenu /></el-icon> 图书管理
+                <el-icon><Setting /></el-icon>图书管理
               </template>
               <el-menu-item index="/manager/bookmanage">
-                <el-icon><HomeFilled /></el-icon>图书管理
+                <el-icon><Notebook /></el-icon>图书管理
               </el-menu-item>
+              <el-menu-item index="/manager/address">
+                <el-icon><Location /></el-icon>地址管理
+              </el-menu-item>
+              <el-menu-item index="/manager/clazz">
+                <el-icon><Folder /></el-icon>分类管理
+              </el-menu-item>
+              <el-menu-item index="/manager/publish">
+                <el-icon><Reading /></el-icon>出版社管理
+              </el-menu-item>
+
             </el-sub-menu>
 
             <!-- 用户管理 -->
             <el-sub-menu index="/manager/user">
               <template #title>
-                <el-icon><Tools /></el-icon>用户管理
+                <el-icon><UserFilled /></el-icon>用户管理
               </template>
               <el-menu-item index="/manager/usermanage">
-                <el-icon><HelpFilled /></el-icon>用户管理
+                <el-icon><Avatar /></el-icon>用户管理
               </el-menu-item>
             </el-sub-menu>
 
             <el-menu-item index="/manager/index">
-              <el-icon><Promotion /></el-icon>
+              <el-icon><HomeFilled /></el-icon>
               <span>我的</span>
             </el-menu-item>
           </el-menu>

@@ -11,3 +11,9 @@ export const changPassword = (id, oldPassword, newPassword) => {
     };
     return request.put('/user/password', data);
 };
+
+export const getUserInfo = (id) => {
+    return request.get(`/user/${id}`)
+  };
+
+export const updateUserApi=(data)=>request.put('/user',data)  

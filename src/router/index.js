@@ -63,6 +63,22 @@ const adminRoutes = [
         path: "index",
         name: "Index",
         component: () => import("@/views/manager/index.vue")
+      },
+      {
+        path: "address",
+        name: "Address",
+        component: () => import("@/views/address/AddressView.vue")
+      },
+      {
+        path: "clazz",
+        name: "Clazz",
+        component: () => import("@/views/clazz/ClazzView.vue")
+      },
+      {
+        path: "publish",
+        name: "Publish",
+        component: () => import("@/views/publish/PublishView.vue")
+
       }
     ]
   }

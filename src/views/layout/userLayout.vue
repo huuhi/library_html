@@ -163,7 +163,7 @@ const resetForm = () => {
           <el-menu router="true">
             <!-- 首页菜单 -->
             <el-menu-item index="/user/books">
-              <el-icon><Promotion /></el-icon>
+              <el-icon><Reading /></el-icon>
               <span>首页</span>
             </el-menu-item>
 
@@ -180,7 +180,7 @@ const resetForm = () => {
               </el-menu-item> 
             </el-sub-menu>  -->
             <el-menu-item index="/user/profile">
-              <el-icon><Promotion /></el-icon>
+              <el-icon><House /></el-icon>
               <span>我的</span>
             </el-menu-item>
 
