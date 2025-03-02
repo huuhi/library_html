@@ -17,6 +17,12 @@ const bookFormRef = ref(null);
 const categories = ref([]);
 const publishers = ref([]);
 const addresses = ref([]);
+const selectedCategory = ref('');
+const searchKeyword = ref('');
+const statusFilter = ref();
+
+
+
 
 const bookForm = reactive({
   id: null,
@@ -42,12 +48,18 @@ const rules = {
 
 const fetchBooks = async () => {
   try {
-    const response = await searchBooksApi('', '', currentPage.value, pageSize.value);
-    if (response.code ) {
+    const response = await searchBooksApi(
+      searchKeyword.value, 
+      statusFilter.value,
+      currentPage.value,
+      pageSize.value,
+      selectedCategory.value 
+    ); 
+    if (response.code) {
       books.value = response.data.records;
       total.value = response.data.total;
     } else {
-      ElMessage.error('获取图书列表失败');
+      ElMessage.error('获取图书列表失败'+response.msg);
     }
   } catch (error) {
     console.error('Error fetching books:', error);
@@ -141,7 +153,10 @@ const submitForm = async () => {
 const handleAvatarSuccess = (response, file) => {
   bookForm.image = response.data;
 };
-
+const handleCategoryClick = (categoryId) => {
+  selectedCategory.value = categoryId;
+  fetchBooks();
+};
 const beforeAvatarUpload = (file) => {
   const isJPG = file.type === 'image/jpeg';
   const isLt2M = file.size / 1024 / 1024 < 2;
@@ -208,6 +223,47 @@ onMounted(() => {
 <template>
   <div class="admin-book-management">
     <h1>图书管理</h1>
+
+
+
+    <div class="category-container">
+      <div class="category-tags">
+        <el-tag 
+          :class="{ 'active-tag': selectedCategory === '' }" 
+          @click="handleCategoryClick('')"
+          class="category-tag"
+        >
+          全部
+        </el-tag>
+        <el-tag 
+          v-for="category in categories" 
+          :key="category.id"
+          :class="{ 'active-tag': selectedCategory === category.id }"
+          @click="handleCategoryClick(category.id)"
+          class="category-tag"
+        >
+          {{ category.name }}
+        </el-tag>
+      </div>
+    </div>
+
+    <div class="search-filter-container">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="搜索图书"
+        class="search-input"
+        @input="fetchBooks"
+      >
+        <template #prefix>
+          <el-icon><Search /></el-icon>
+        </template>
+      </el-input>
+      <el-select v-model="statusFilter" placeholder="图书状态" @change="fetchBooks">
+        <el-option label="全部" value='' />
+        <el-option label="可借" value=1 />
+        <el-option label="已借出" value=0 />
+      </el-select>
+    </div>
 
     <!-- Book List -->
     <el-table :data="books" style="width: 100%">
@@ -345,5 +401,47 @@ onMounted(() => {
   width: 178px;
   height: 178px;
   display: block;
+}
+
+.category-container {
+  margin-bottom: 20px;
+  background: linear-gradient(to right, #1e3c72, #2a5298);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.category-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-tag {
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.category-tag:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.active-tag {
+  background-color: #fff !important;
+  color: #1e3c72 !important;
+}
+
+.search-filter-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
 }
 </style>
