@@ -69,10 +69,10 @@
         </div>
       </template>
       <el-table :data="borrowingRecords" style="width: 100%">
-        <el-table-column prop="bookName" label="书名" />
-        <el-table-column prop="lendTime" label="借阅时间" :formatter="formatDateTime" />
-        <el-table-column prop="mustReturnTime" label="应还时间" :formatter="formatDateTime" />
-        <el-table-column prop="returnTime" label="归还时间" :formatter="formatDateTime" />
+        <el-table-column prop="bookName" label="书名" width="100"/>
+        <el-table-column prop="lendTime" label="借阅时间"  />
+        <el-table-column prop="mustReturnTime" label="应还时间"  />
+        <el-table-column prop="returnTime" label="归还时间"  />
         <el-table-column prop="statusName" label="状态">
           <template #default="scope">
             <el-tag 
@@ -92,6 +92,9 @@
           <template #default="scope">
             <el-button type="primary" @click="returnBook(scope.row)" :disabled="scope.row.status !== 1" round>
               还书
+            </el-button>
+            <el-button type="primary" @click="openQuestionForm(scope.row.id)" :disabled="scope.row.status === 1 || scope.row.status ===0" round>
+              申述
             </el-button>
           </template>
         </el-table-column>
@@ -153,16 +156,45 @@
         </span>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="dialogFormVisible" title="反馈" width="500" align-center>
+    <el-form :model="question" :rules="rules" ref="ruleFormRef">
+      <!-- 0=罚款申诉 1=借阅申诉 2=评论申诉 3=其他 -->
+      <el-form-item label="问题类型" :label-width="formLabelWidth" prop="type">
+        <el-select v-model="question.questionType" placeholder="请选择申诉类型">
+          <el-option label="罚款申诉" value="0" />
+          <el-option label="借阅申诉" value="1" />
+          <el-option label="评论申诉" value="2" />
+          <el-option label="其他" value="3" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="反馈内容" :label-width="formLabelWidth" prop="note">
+        <el-input v-model="question.note" autocomplete="off" type="textarea"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitQuestion()">
+          确定
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
   </div>
+
+
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { getUserInfo ,updateUserApi} from '@/api/userApi';
 import { getTotalBorrowed, getCurrentlyBorrowed, getBorrowingRecords} from '@/api/borrowApi'
 import parseJwt from '@/utils/parseJwt';
-import {lendBookApi} from '@/api/booksApi'
+import {lendBookApi} from '@/api/booksApi';
+import { addQuestionApi } from '@/api/questionApi';
 
 
 const userInfo = ref({});
@@ -174,9 +206,17 @@ const pageSize = ref(10);
 const total = ref(0);
 const status = ref('');
 const lend=ref({userId:'',bookId:'',status:1})
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
+const question=reactive({
+  userId:'',
+  borrowRecordId:'',
+  questionType:'',
+  note:''
+})
 
 
-const userId=ref(13); // This should be dynamically set based on the logged-in user
+const userId=ref(); // This should be dynamically set based on the logged-in user
 
 const fetchUserInfo = async () => {
   try {
@@ -281,7 +321,9 @@ const rules = {
     }
   ],
   gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
-  address: { required: true, message: '请输入地址', trigger: 'blur' }
+  address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
+  type:[{ required: true, message: '请选择反馈类型', trigger: 'change' }],
+  note:[{ required:true,max:200,message:'最多输入200个字符' ,trigger: 'blur'}] 
 };
 
 // 还书
@@ -359,6 +401,21 @@ const submitEditForm = async (formEl) => {
   })
 
 };
+const openQuestionForm=(id)=>{
+  question.borrowRecordId=id;
+  question.userId=userId.value;
+  dialogFormVisible.value=true;
+}
+const submitQuestion=async()=>{
+  const res=await addQuestionApi(question);
+  if(res.code){
+    ElMessage.success('反馈成功')
+  }else{
+    ElMessage.error(res.msg)
+  }
+  dialogFormVisible.value=false;
+}
+
 
 onMounted(() => {
   const jwt=localStorage.getItem('user');

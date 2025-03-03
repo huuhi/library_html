@@ -78,7 +78,16 @@ const adminRoutes = [
         path: "publish",
         name: "Publish",
         component: () => import("@/views/publish/PublishView.vue")
-
+      },
+      {
+        path: "borrow",
+        name:"Borrow",
+        component: () => import("@/views/borrow/boorowView.vue")
+      },
+      {
+        path: "penalty",
+        name: "Penalty",
+        component: () => import("@/views/penalty/penaltyView.vue")
       }
     ]
   }

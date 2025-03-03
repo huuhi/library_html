@@ -179,8 +179,16 @@ const handleMenuSelect = (path) => {
               <el-menu-item index="/manager/publish">
                 <el-icon><Reading /></el-icon>出版社管理
               </el-menu-item>
-
+              <el-menu-item index="/manager/borrow">
+                <el-icon><Files /></el-icon>借阅记录
+              </el-menu-item>
+              <el-menu-item index="/manager/penalty">
+                <el-icon><Files /></el-icon>罚款跟踪
+              </el-menu-item>
+            
             </el-sub-menu>
+
+
 
             <!-- 用户管理 -->
             <el-sub-menu index="/manager/user">

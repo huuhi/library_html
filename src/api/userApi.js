@@ -17,3 +17,6 @@ export const getUserInfo = (id) => {
   };
 
 export const updateUserApi=(data)=>request.put('/user',data)  
+
+
+export const getUsernameAndIdApi=()=>request.get('/user/all')
