@@ -26,19 +26,19 @@
       <!-- Borrow Records Table -->
       <el-table :data="borrowRecords" style="width: 100%">
         <el-table-column prop="id" label="ID" width="60" />
-        <el-table-column prop="userName" label="用户名" width="80" />
-        <el-table-column prop="bookName" label="书名" width="150"/>
-        <el-table-column prop="statusName" label="状态" width="88">
+        <el-table-column prop="userName" label="用户名" width="100" />
+        <el-table-column prop="bookName" label="书名" width="140"/>
+        <el-table-column prop="statusName" label="状态" width="80">
           <template #default="scope">
             <el-tag :type="getStatusType(scope.row.status)">{{ scope.row.statusName }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lendTime" label="借出时间"  width="120"/>
-        <el-table-column prop="returnTime" label="归还时间"  width="120"/>
+        <el-table-column prop="lendTime" label="借出时间"  width="100"/>
+        <el-table-column prop="returnTime" label="归还时间"  width="100"/>
         <el-table-column prop="overdueDays" label="逾期天数" width="80"/>
-        <el-table-column prop="violationReason" label="违规原因" width="80"/>
-        <el-table-column prop="penaltyAmount" label="罚款金额" width="80"/>
-        <el-table-column prop="note" label="备注" width="80"/>
+        <!-- <el-table-column prop="violationReason" label="违规原因" width="80"/>
+        <el-table-column prop="penaltyAmount" label="罚款金额" width="80"/> -->
+        <el-table-column prop="note" label="备注" width="100"/>
         <el-table-column label="操作" >
           <template #default="scope">
             <el-button size="small" @click="showEditDialog(scope.row)">编辑</el-button>

@@ -28,9 +28,7 @@ const submitForm = async (formEl) => {
           ElMessage.success('登录成功');
           localStorage.setItem('user', JSON.stringify(res.data.token));
           const role = res.data.role === 0 ? 'user' : 'admin';
-          const image=res.data.image;
           localStorage.setItem('role', role);
-          localStorage.setItem('image', image);
           router.push('/');
         } else {
           ElMessage.error('登录失败');

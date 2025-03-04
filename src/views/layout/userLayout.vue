@@ -1,14 +1,19 @@
 <script lang="js" setup>
-import { ref, reactive ,onMounted,nextTick} from 'vue'
+import { ref, reactive ,onMounted,nextTick ,computed} from 'vue'
 import { ElMessage } from 'element-plus'
 import { changPassword } from '@/api/userApi'
 import  parseJwt  from '@/utils/parseJwt';
-
+import {Message} from '@element-plus/icons-vue'
+import { useRoute } from 'vue-router' 
+const route = useRoute();
 const centerDialogVisible = ref(false)
 const id=ref();
 const username=ref();
 const image=ref('');
 
+const showSidebar = computed(() => {
+  return !route.path.startsWith('/message') // 根据路由路径判断
+})
 
 const handleOpen = (key, keyPath) => {
   console.log(key, keyPath)
@@ -23,7 +28,6 @@ const login = () => {
 
   localStorage.removeItem('user');
   localStorage.removeItem('role');
-  localStorage.removeItem('image');
   window.location.href = '/login'
 
   //
@@ -50,8 +54,9 @@ onMounted(()=>{
   const claim=parseJwt(token)
   console.log(claim)
   id.value=claim.userId;
-  image.value=localStorage.getItem('image');
+  image.value=claim.userImage;
   console.log(image.value)
+  username.value=claim.username;
 })
 // 修改密码对话框状态
 const pwdDialogVisible = ref(false)
@@ -115,6 +120,11 @@ const submitPwd = async () => {
     console.log('表单验证失败', e)
   }
 }
+const toMessageView=()=>{
+  setTimeout(()=>{
+    window.location.href = '/message'
+  },1000)
+}
 
 // 模拟修改密码API
 
@@ -128,23 +138,19 @@ const resetForm = () => {
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-page-header icon="">
+        <el-page-header @back="backpage">
           <template #content>
-            <div class="flex items-center justify-center">
-              <el-avatar
-                :size="32"
-                class="mr-3"
-                :src=image
-                />
+            <div class="flex items-center justify-center" style="align-items: center">
+              <el-avatar :size="32" class="mr-3" :src="image" />
               <span class="text-large font-600 mr-3"> {{ username }} </span>
               <!-- <span class="text-sm mr-2" style="color: var(--el-text-color-regular)">
                     的小项目
                     </span> -->
-              <el-tag>用户</el-tag>
             </div>
           </template>
           <template #extra>
             <div class="flex items-center justify-center">
+              <el-button type="info" :icon="Message" circle  @click="toMessageView"/>
               <el-button @click="pwdDialogVisible = true">修改密码</el-button>
               <el-button
                 type="primary"
@@ -158,7 +164,7 @@ const resetForm = () => {
         </el-page-header>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside v-if="showSidebar" width="200px">
           <!-- 左侧菜单栏 -->
           <el-menu router="true">
             <!-- 首页菜单 -->
@@ -214,7 +220,7 @@ const resetForm = () => {
             </el-sub-menu> -->
           </el-menu>
         </el-aside>
-        <el-main>
+        <el-main :class="{ 'full-width': !showSidebar }">
           <!-- 动态路由 -->
           <router-view></router-view>
           <!-- 页面 -->
@@ -237,6 +243,7 @@ const resetForm = () => {
         </div>
       </template>
     </el-dialog>
+  
 
     <!-- 修改密码 -->
     <el-dialog
@@ -289,4 +296,16 @@ const resetForm = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.hover-icon {
+  transition: transform 0.2s ease-in-out;
+  margin-top: 15px;
+}
+.hover-icon:hover {
+  transform: scale(1.1);
+  color: var(--el-color-primary); /* 悬停变色 */
+}
+.full-width {
+  margin-left: 0 !important; /* 隐藏侧边栏时铺满宽度 */
+}
+</style>

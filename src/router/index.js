@@ -13,6 +13,11 @@ const publicRoutes = [
     name: "Register",
     component: () => import("@/views/login/register.vue"),
     meta: { requiresAuth: false }
+  },
+  {
+    path: "/message",
+    name: "Message",
+    component: ()=>import("@/views/message/messageView.vue")
   }
 ];
 
@@ -37,6 +42,11 @@ const userRoutes = [
         path: "/book/:id",
         name: "BookDetail",
         component: ()=>import("@/views/book/BookDetail.vue"),
+      },
+      {
+        path:"/message",
+        name:"Message",
+        component: ()=>import("@/views/message/messageView.vue")
       }
     ]
   }
@@ -88,6 +98,11 @@ const adminRoutes = [
         path: "penalty",
         name: "Penalty",
         component: () => import("@/views/penalty/penaltyView.vue")
+      },
+      {
+        path:"appeal",
+        name: "Appeal",
+        component: ()=>import("@/views/user/UserAppealView.vue")
       }
     ]
   }

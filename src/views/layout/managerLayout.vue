@@ -40,15 +40,13 @@ const parseJwt = (token) => {
 
 onMounted(() => {
   // 获取用户信息
-  image.value=localStorage.getItem('image');
-  const token = localStorage.getItem('user')
-  if (token) {
-    const claim = parseJwt(token)
-    if (claim) {
-      id.value = claim.id
-      username.value = claim.username
-    }
-  }
+  const token=localStorage.getItem('user')
+  const claim=parseJwt(token)
+  console.log(claim)
+  id.value=claim.userId;
+  image.value=claim.userImage;
+  console.log(image.value)
+  username.value=claim.username;
 })
 
 // 修改密码对话框状态
@@ -103,7 +101,6 @@ const submitPwd = async () => {
       setTimeout(() => {
         localStorage.removeItem('user')
         localStorage.removeItem('role')
-        localStorage.removeItem('image')
         router.push('/login')
       }, 1000)
     }
@@ -197,6 +194,9 @@ const handleMenuSelect = (path) => {
               </template>
               <el-menu-item index="/manager/usermanage">
                 <el-icon><Avatar /></el-icon>用户管理
+              </el-menu-item>
+              <el-menu-item index="/manager/appeal">
+                <el-icon><QuestionFilled /></el-icon>用户反馈
               </el-menu-item>
             </el-sub-menu>
 
