@@ -206,7 +206,7 @@ const handleMenuSelect = (path) => {
             </el-menu-item>
           </el-menu>
         </el-aside>
-        <el-main>
+        <el-main class="content-container">
           <!-- 动态路由 -->
           <router-view></router-view>
         </el-main>
@@ -292,5 +292,10 @@ const handleMenuSelect = (path) => {
 
 .el-menu {
   border-right: none;
+}
+:deep(.content-container) {
+  margin-top: 10px; /* 根据 header 高度调整 */
+  overflow: auto;
+  height: calc(100vh - 60px);
 }
 </style>

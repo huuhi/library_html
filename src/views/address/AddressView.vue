@@ -18,7 +18,14 @@
       </div>
   
       <!-- Address Table -->
-      <el-table :data="addresses" style="width: 100%">
+      <el-table
+       :data="addresses"
+        style="width: 100%"
+        v-loading="loading"
+      :element-loading-svg="svg"
+      class="custom-loading-svg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+        >
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="address" label="地址" />
         <el-table-column label="操作" width="200">
@@ -94,6 +101,18 @@
     rackLayer: 1,
     address: ''
   });
+
+  const loading = ref(true)
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+        `
   
   const rules = {
     area: [{ required: true, message: '请输入地区', trigger: 'blur' }],
@@ -111,6 +130,7 @@
       } else {
         ElMessage.error('获取地址列表失败');
       }
+      loading.value = false
     } catch (error) {
       console.error('Error fetching addresses:', error);
       ElMessage.error('获取地址列表时发生错误');
@@ -216,6 +236,9 @@
   </script>
   
   <style scoped>
+  .example-showcase .el-loading-mask {
+    z-index: 9;
+  }
   .address-management {
     padding: 20px;
   }

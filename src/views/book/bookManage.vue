@@ -23,6 +23,17 @@ const statusFilter = ref();
 
 
 
+const loading = ref(true)
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+        `
 
 const bookForm = reactive({
   id: null,
@@ -61,6 +72,7 @@ const fetchBooks = async () => {
     } else {
       ElMessage.error('获取图书列表失败'+response.msg);
     }
+    loading.value = false
   } catch (error) {
     console.error('Error fetching books:', error);
     ElMessage.error('获取图书列表时发生错误');
@@ -266,7 +278,16 @@ onMounted(() => {
     </div>
 
     <!-- Book List -->
-    <el-table :data="books" style="width: 100%">
+    <el-table
+     :data="books"
+      style="width: 100%"
+      v-loading="loading"
+    element-loading-text="Loading..."
+    :element-loading-spinner="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.8)"
+      
+      >
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="书名" width="180" />
       <el-table-column prop="author" label="作者" width="120" />
@@ -279,7 +300,7 @@ onMounted(() => {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" >
         <template #default="scope">
           <el-button size="small" @click="editBook(scope.row)">编辑</el-button>
           <el-button size="small" type="danger" @click="deleteBook(scope.row.id)">删除</el-button>

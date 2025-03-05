@@ -5,11 +5,13 @@ import { changPassword } from '@/api/userApi'
 import  parseJwt  from '@/utils/parseJwt';
 import {Message} from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router' 
+import { getUserMessageCount } from '@/api/questionApi';
 const route = useRoute();
 const centerDialogVisible = ref(false)
 const id=ref();
 const username=ref();
 const image=ref('');
+const messageCount=ref(0);
 
 const showSidebar = computed(() => {
   return !route.path.startsWith('/message') // 根据路由路径判断
@@ -48,6 +50,15 @@ const login = () => {
 //     }
 // }
 // 修改密码
+const onBack=()=>{
+  window.history.back();
+}
+const getMessageCount=async()=>{
+  const res= await getUserMessageCount(id.value)
+  messageCount.value=res.data;
+
+}
+
 
 onMounted(()=>{
   const token=localStorage.getItem('user')
@@ -57,6 +68,7 @@ onMounted(()=>{
   image.value=claim.userImage;
   console.log(image.value)
   username.value=claim.username;
+  getMessageCount();
 })
 // 修改密码对话框状态
 const pwdDialogVisible = ref(false)
@@ -121,9 +133,9 @@ const submitPwd = async () => {
   }
 }
 const toMessageView=()=>{
-  setTimeout(()=>{
-    window.location.href = '/message'
-  },1000)
+  getMessageCount();
+  window.location.href = '/message'
+
 }
 
 // 模拟修改密码API
@@ -138,8 +150,8 @@ const resetForm = () => {
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-page-header @back="backpage">
-          <template #content>
+        <el-page-header @back="onBack">
+            <template #content>
             <div class="flex items-center justify-center" style="align-items: center">
               <el-avatar :size="32" class="mr-3" :src="image" />
               <span class="text-large font-600 mr-3"> {{ username }} </span>
@@ -150,7 +162,9 @@ const resetForm = () => {
           </template>
           <template #extra>
             <div class="flex items-center justify-center">
-              <el-button type="info" :icon="Message" circle  @click="toMessageView"/>
+              <el-badge :value=messageCount :max="99" class="item">
+                <el-button type="info" :icon="Message" circle  @click="toMessageView"/>
+              </el-badge>
               <el-button @click="pwdDialogVisible = true">修改密码</el-button>
               <el-button
                 type="primary"
@@ -220,7 +234,7 @@ const resetForm = () => {
             </el-sub-menu> -->
           </el-menu>
         </el-aside>
-        <el-main :class="{ 'full-width': !showSidebar }">
+        <el-main :class="{ 'full-width': !showSidebar }" id="main">
           <!-- 动态路由 -->
           <router-view></router-view>
           <!-- 页面 -->
@@ -307,5 +321,14 @@ const resetForm = () => {
 }
 .full-width {
   margin-left: 0 !important; /* 隐藏侧边栏时铺满宽度 */
+}
+.item {
+  margin-top: 10px;
+  margin-right: 40px;
+}
+:deep(#main) {
+  margin-top: 0px; /* 根据 header 高度调整 */
+  overflow: auto;
+  height: calc(100vh - 60px);
 }
 </style>

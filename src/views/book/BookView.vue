@@ -1,5 +1,6 @@
 <template>
   <div class="book-display-container">
+    <!-- <h1>图书列表</h1> -->
     <div class="category-container">
       <div class="category-tags">
         <el-tag 
@@ -39,7 +40,14 @@
       </el-select>
     </div>
 
-    <div class="book-grid">
+    <div 
+    class="book-grid"
+    v-loading="loading"
+    element-loading-text="Loading..."
+    :element-loading-spinner="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.8)"
+    >
       <div v-for="book in books" :key="book.id" class="book-card" @click="navigateToBookDetail(book.id)">
         <el-image :src="book.image" fit="cover" class="book-image">
           <template #error>
@@ -92,7 +100,17 @@ const searchKeyword = ref('');
 const statusFilter = ref();
 const categories = ref([]);
 const selectedCategory = ref('');
-
+const loading = ref(true)
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
 const fetchCategories = async () => {
   try {
     const response = await getClazzApi();
@@ -127,6 +145,7 @@ const fetchBooks = async () => {
     } else {
       ElMessage.error('获取图书列表失败'+response.msg);
     }
+    loading.value=false;
   } catch (error) {
     console.error('Error fetching books:', error);
     ElMessage.error('获取图书列表时发生错误');
@@ -214,18 +233,29 @@ onMounted(() => {
 .book-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
+  /* overflow: hidden;
+  transition: box-shadow 0.3s ease; */
+  position: relative; 
+  overflow: hidden; 
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
 }
 
 .book-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .book-image {
   width: 100%;
   height: 300px;
   object-fit: cover;
+  transition: transform 0.3s ease; /* 新增 */
+}
+.book-card:hover .book-image {
+  transform: scale(1.05);
 }
 
 .image-placeholder {

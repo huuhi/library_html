@@ -22,7 +22,16 @@
     </div>
 
     <!-- 用户表格 -->
-    <el-table :data="users" style="width: 100%" @row-click="showUserDetails">
+    <el-table
+     :data="users"
+      style="width: 100%"
+      @row-click="showUserDetails"
+      v-loading="loading"
+    :element-loading-svg="svg"
+    class="custom-loading-svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+      
+      >
       <el-table-column prop="username" label="用户名" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="phone" label="电话" />
@@ -128,6 +137,17 @@ const confineDialogVisible = ref(false)
 const currentUser = ref({})
 const statusDialogTitle = ref('')
 
+const loading = ref(true)
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
 const filters = reactive({
   username: '',
   role: '',
@@ -154,6 +174,7 @@ const fetchUserList = async () => {
     } else {
       ElMessage.error('获取用户列表失败')
     }
+    loading.value=false;
   } catch (error) {
     console.error('Error fetching users:', error)
     ElMessage.error('获取用户列表时发生错误')

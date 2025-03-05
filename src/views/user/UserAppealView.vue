@@ -21,6 +21,10 @@
   
       <!-- 反馈列表 -->
       <el-table 
+      v-loading="loading"
+      :element-loading-svg="svg"
+      class="custom-loading-svg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
         :data="feedbacks" 
         style="width: 100%" 
         @selection-change="handleSelectionChange"
@@ -126,6 +130,20 @@
     managerId: null,
     processNote: ''
   })
+
+  const loading = ref(true)
+  const svg = `
+          <path class="path" d="
+            M 30 15
+            L 28 17
+            M 25.61 25.61
+            A 15 15, 0, 0, 1, 15 30
+            A 15 15, 0, 1, 1, 27.99 7.5
+            L 15 15
+          " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+        `
+
+
   
   const rules = {
     status: [{ required: true, message: '请选择状态', trigger: 'change' }],
@@ -141,6 +159,7 @@
       } else {
         ElMessage.error('获取反馈列表失败')
       }
+      loading.value=false;
     } catch (error) {
       console.error('Error fetching feedbacks:', error)
       ElMessage.error('获取反馈列表时发生错误')

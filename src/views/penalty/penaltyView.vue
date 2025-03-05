@@ -12,7 +12,15 @@
       </div>
   
       <!-- Penalty Records Table -->
-      <el-table :data="penaltyRecords" style="width: 100%">
+      <el-table
+       :data="penaltyRecords"
+        style="width: 100%"
+        v-loading="loading"
+      element-loading-text="Loading..."
+      :element-loading-spinner="svg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+      element-loading-background="rgba(122, 122, 122, 0.8)"
+        >
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="userName" label="用户名" />
         <el-table-column prop="bookName" label="书名" />
@@ -106,6 +114,17 @@
     penaltyAmount: null,
     note: ''
   })
+  const loading = ref(true)
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
   
   const rules = {
     status: [{ required: true, message: '请选择状态', trigger: 'change' }],
@@ -121,6 +140,7 @@
       } else {
         ElMessage.error('获取罚款记录失败')
       }
+      loading.value=false;
     } catch (error) {
       console.error('Error fetching penalty records:', error)
       ElMessage.error('获取罚款记录时发生错误')

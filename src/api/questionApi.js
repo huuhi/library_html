@@ -17,3 +17,9 @@ export const updateFeedbackStatus = (data) => {
 export const removeFeedback = (id) => {
   return request.delete(`/question/${id}`)
 }
+export const getUserMessages = (userId) => {
+  return request.get(`/question/getUserQuestion/${userId}`)
+}
+export const getUserMessageCount=(userId)=>{
+  return request.get(`/question/getCount/${userId}`)
+}
