@@ -4,7 +4,9 @@ import router from '../router'
 
 const request=axios.create({  
   baseURL:'/api',
-  timeout:5000//超时时间 5s
+  //超时时间 5s
+  timeout:5000,
+  withCredentials: true // 关键配置
 })
 // axios的请求request拦截器
 request.interceptors.request.use(
@@ -25,6 +27,8 @@ request.interceptors.response.use(
   (response)=>{
     if(response.data.msg==='NOT_LOGIN'){
       ElMessage.error('请先登录')
+      localStorage.removeItem('user')
+      localStorage.removeItem('role')
       window.location.href = '/login'
     }
     return response.data

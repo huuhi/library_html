@@ -162,7 +162,7 @@ const resetForm = () => {
           </template>
           <template #extra>
             <div class="flex items-center justify-center">
-              <el-badge :value=messageCount :max="99" class="item">
+              <el-badge :value=messageCount :max="99" hidden="messageCount==0" class="item">
                 <el-button type="info" :icon="Message" circle  @click="toMessageView"/>
               </el-badge>
               <el-button @click="pwdDialogVisible = true">修改密码</el-button>

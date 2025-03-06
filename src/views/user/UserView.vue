@@ -90,7 +90,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button type="primary" @click="returnBook(scope.row)" :disabled="scope.row.status !== 1" round>
+            <el-button type="primary" @click="returnBook(scope.row)" :disabled="scope.row.status !== 1 &&scope.row.status!==2 " round>
               还书
             </el-button>
             <el-button type="primary" @click="openQuestionForm(scope.row.id)" :disabled="scope.row.status === 1 || scope.row.status ===0" round>
@@ -330,6 +330,7 @@ const rules = {
 const returnBook = async (row) => {
   lend.value.bookId= row.bookId;
   lend.value.userId=row.userId;
+  lend.value.status=row.status;
   const res=await lendBookApi(lend.value);
   if(res.code){
     ElMessage.success('还书成功');
