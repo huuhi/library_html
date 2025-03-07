@@ -37,4 +37,6 @@ export const fetchUsers = (page, pageSize, username, role, status) => {
   export const updateUserConfine = (confine, id) => {
     return request.put(`/user/confine/${confine}`, null, { params: { id } })
   }
-  
+  export const exitApi=(id)=>{
+    return request.put(`/user/exit/${id}`)
+  }

@@ -330,7 +330,7 @@ const rules = {
 const returnBook = async (row) => {
   lend.value.bookId= row.bookId;
   lend.value.userId=row.userId;
-  lend.value.status=row.status;
+
   const res=await lendBookApi(lend.value);
   if(res.code){
     ElMessage.success('还书成功');

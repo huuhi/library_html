@@ -15,7 +15,7 @@ export const getAddressesApi = (pageNum, pageSize, address) => {
   }
   
   export const updateAddressApi = (data) => {
-    return request.put("/address/update", data)
+    return request.post("/address/update", data)
   }
   
   export const deleteAddressApi = (id) => {

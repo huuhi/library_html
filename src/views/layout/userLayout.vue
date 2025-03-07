@@ -1,7 +1,7 @@
 <script lang="js" setup>
 import { ref, reactive ,onMounted,nextTick ,computed} from 'vue'
 import { ElMessage } from 'element-plus'
-import { changPassword } from '@/api/userApi'
+import { changPassword,exitApi } from '@/api/userApi'
 import  parseJwt  from '@/utils/parseJwt';
 import {Message} from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router' 
@@ -24,13 +24,18 @@ const handleClose = (key, keyPath) => {
   console.log(key, keyPath)
 }
 // 退出登录
-const login = () => {
+const exitLogin =async() => {
   // 跳转登录页面
-  centerDialogVisible.value=false;
+  const res=await exitApi(id.value);
+  if(res.code){
+    centerDialogVisible.value=false;
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    window.location.href = '/login'
+  }else{
+    ElMessage.error(res.msg)
+  }
 
-  localStorage.removeItem('user');
-  localStorage.removeItem('role');
-  window.location.href = '/login'
 
   //
 }
@@ -253,7 +258,7 @@ const resetForm = () => {
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="centerDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="login()"> 确定 </el-button>
+          <el-button type="primary" @click="exitLogin()"> 确定 </el-button>
         </div>
       </template>
     </el-dialog>

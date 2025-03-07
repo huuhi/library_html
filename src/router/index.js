@@ -103,6 +103,11 @@ const adminRoutes = [
         path:"appeal",
         name: "Appeal",
         component: ()=>import("@/views/user/UserAppealView.vue")
+      },
+      {
+        path: "review",
+        name: "Review",
+        component:()=>import("@/views/review/ReviewManageView.vue")
       }
     ]
   }

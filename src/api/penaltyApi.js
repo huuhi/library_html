@@ -9,7 +9,7 @@ export const getPenaltyRecordsApi = (pageNum, pageSize, status) => {
   }
   
   export const updatePenaltyApi = (data) => {
-    return request.put("/penalty/update", data)
+    return request.post("/penalty/update", data)
   }
   
   export const deletePenaltyApi = (id) => {

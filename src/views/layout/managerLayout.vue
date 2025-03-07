@@ -198,6 +198,9 @@ const handleMenuSelect = (path) => {
               <el-menu-item index="/manager/appeal">
                 <el-icon><QuestionFilled /></el-icon>用户反馈
               </el-menu-item>
+              <el-menu-item index="/manager/review">
+                <el-icon><QuestionFilled /></el-icon>评论审核
+              </el-menu-item>
             </el-sub-menu>
 
             <el-menu-item index="/manager/index">

@@ -235,7 +235,7 @@ const borrowBook = async () => {
       ElMessage.success('借书成功')
       fetchBookDetails()
     } else {
-      ElMessage.error('借书失败' + res.msg)
+      ElMessage.error('借书失败：' + res.msg)
     }
   } catch (error) {
     console.error('Error:', error)
@@ -286,7 +286,7 @@ onMounted(async () => {
 
 .book-image {
   width: 100%;
-  max-height: 400px;
+  max-height: 500px;
   object-fit: cover;
 }
 

@@ -19,3 +19,16 @@ export const cancelLikeReviewApi=(reviewId,userId)=>{
     const data={"reviewId":reviewId,"userId":userId};
     return request.delete(`/review-like/cancel-like/${reviewId}/${userId}`)
 }
+
+export const getComments = (pageNum, pageSize, isAudit) => {
+  return request.get("/review/page", { params: { pageNum, pageSize, isAudit } })
+}
+
+export const auditComment = (data) => {
+  return request.put("/review/audit", data)
+}
+
+export const deleteComment = (id) => {
+  return request.delete(`/review/delete/${id}`)
+}
+
