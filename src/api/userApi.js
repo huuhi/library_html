@@ -19,6 +19,7 @@ export const getUserInfo = (id) => {
 export const updateUserApi=(data)=>request.put('/user',data)  
 
 
+// 获取用户的id和username
 export const getUsernameAndIdApi=()=>request.get('/user/all')
 
 

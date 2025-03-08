@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-// import { changPassword } from '@/api/use'
+import { changPassword,exitApi } from '@/api/userApi'
 
 const router = useRouter()
 const centerDialogVisible = ref(false)
@@ -11,11 +11,16 @@ const username = ref('')
 const image=ref('')
 
 // 退出登录
-const login = () => {
-  centerDialogVisible.value = false
-  localStorage.removeItem('user')
-  localStorage.removeItem('role')
-  router.push('/login')
+const login = async() => {
+  const res=await exitApi(id.value);
+  if(res.code){
+    centerDialogVisible.value = false
+    localStorage.removeItem('user')
+    localStorage.removeItem('role')
+    router.push('/login')
+  }else{
+    ElMessage.error(res.msg)
+  }
 }
 
 const parseJwt = (token) => {
@@ -199,10 +204,14 @@ const handleMenuSelect = (path) => {
                 <el-icon><QuestionFilled /></el-icon>用户反馈
               </el-menu-item>
               <el-menu-item index="/manager/review">
-                <el-icon><QuestionFilled /></el-icon>评论审核
+                <el-icon><Check /></el-icon>评论审核
               </el-menu-item>
             </el-sub-menu>
 
+            <!-- 日志管理 -->
+              <el-menu-item index="/manager/log">
+                <el-icon><Document /></el-icon>日志管理
+              </el-menu-item>
             <el-menu-item index="/manager/index">
               <el-icon><HomeFilled /></el-icon>
               <span>我的</span>

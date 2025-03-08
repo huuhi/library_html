@@ -108,6 +108,11 @@ const adminRoutes = [
         path: "review",
         name: "Review",
         component:()=>import("@/views/review/ReviewManageView.vue")
+      },
+      {
+        path: "log",
+        name: "Log",
+        component: ()=>import("@/views/log/logView.vue")
       }
     ]
   }

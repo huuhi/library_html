@@ -32,3 +32,8 @@ export const deleteComment = (id) => {
   return request.delete(`/review/delete/${id}`)
 }
 
+export const getPendingComments = (pageNum, pageSize) => {
+  return request.get("/review/review/pending", { params: { pageNum, pageSize } })
+}
+
+

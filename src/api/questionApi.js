@@ -23,3 +23,7 @@ export const getUserMessages = (userId) => {
 export const getUserMessageCount=(userId)=>{
   return request.get(`/question/getCount/${userId}`)
 }
+export const getPendingFeedbacks = (pageNum, pageSize) => {
+  return request.get("/question/user-feedback/pending", { params: { pageNum, pageSize } })
+}
+

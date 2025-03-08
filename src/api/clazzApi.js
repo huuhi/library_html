@@ -23,4 +23,7 @@ export const getClazzByPageApi = (pageNum, pageSize, className) => {
   export const deleteClazz = (id) => {
     return request.delete(`/class/${id}`)
   }
+  export const getClazzAndCount = () => {
+    return request.get("/admin/book-categories")
+  }
 
