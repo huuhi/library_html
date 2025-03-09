@@ -24,3 +24,7 @@ export const getTotalBorrowed = (userId) => {
   export const updateBorrowRecordApi = (data) => {
     return request.post("/borrow/update", data)
   }
+  // /renew/{id},续借
+  export const renewBorrowRecordApi = (id) => {
+    return request.post(`borrow/renew/${id}`)
+  }

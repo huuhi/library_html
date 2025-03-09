@@ -69,11 +69,11 @@
         </div>
       </template>
       <el-table :data="borrowingRecords" style="width: 100%">
-        <el-table-column prop="bookName" label="书名" width="100"/>
-        <el-table-column prop="lendTime" label="借阅时间"  />
-        <el-table-column prop="mustReturnTime" label="应还时间"  />
-        <el-table-column prop="returnTime" label="归还时间"  />
-        <el-table-column prop="statusName" label="状态">
+        <el-table-column prop="bookName" label="书名" width="180/"/>
+        <el-table-column prop="lendTime" label="借阅时间" width="150" />
+        <el-table-column prop="mustReturnTime" label="应还时间" width="150" />
+        <el-table-column prop="returnTime" label="归还时间" width="150" />
+        <el-table-column prop="statusName" label="状态" width="100">
           <template #default="scope">
             <el-tag 
               :type="{
@@ -95,6 +95,9 @@
             </el-button>
             <el-button type="primary" @click="openQuestionForm(scope.row.id)" :disabled="scope.row.status === 1 || scope.row.status ===0" round>
               申述
+            </el-button>
+            <el-button type="primary" @click="renewBorrowRecord(scope.row.id)" :disabled="scope.row.status !== 1 && scope.row.status !==2" round>
+              续借
             </el-button>
           </template>
         </el-table-column>
@@ -191,7 +194,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { getUserInfo ,updateUserApi} from '@/api/userApi';
-import { getTotalBorrowed, getCurrentlyBorrowed, getBorrowingRecords} from '@/api/borrowApi'
+import { getTotalBorrowed, getCurrentlyBorrowed, getBorrowingRecords,renewBorrowRecordApi} from '@/api/borrowApi'
 import parseJwt from '@/utils/parseJwt';
 import {lendBookApi} from '@/api/booksApi';
 import { addQuestionApi } from '@/api/questionApi';
@@ -415,6 +418,16 @@ const submitQuestion=async()=>{
     ElMessage.error(res.msg)
   }
   dialogFormVisible.value=false;
+}
+// 续借
+const renewBorrowRecord=async(id)=>{
+  const res=await renewBorrowRecordApi(id);
+  if(res.code){
+    ElMessage.success('续借成功')
+    fetchBorrowingRecords();
+  }else{
+    ElMessage.error(res.msg)
+  }
 }
 
 

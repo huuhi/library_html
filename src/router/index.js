@@ -47,6 +47,11 @@ const userRoutes = [
         path:"/message",
         name:"Message",
         component: ()=>import("@/views/message/messageView.vue")
+      },
+      {
+        path:"/post",
+        name:"Post",
+        component: ()=>import("@/views/post/postView.vue")
       }
     ]
   }

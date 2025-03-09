@@ -191,6 +191,10 @@ const resetForm = () => {
               <el-icon><Reading /></el-icon>
               <span>首页</span>
             </el-menu-item>
+            <el-menu-item index="/post">
+              <el-icon><Document /></el-icon>
+              <span>帖子</span>
+            </el-menu-item>
 
             <!-- 班级管理菜单 -->
             <!-- <el-sub-menu index="/profile">
