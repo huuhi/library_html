@@ -15,3 +15,9 @@ export const getPenaltyRecordsApi = (pageNum, pageSize, status) => {
   export const deletePenaltyApi = (id) => {
     return request.delete(`/penalty/${id}`)
   }
+  export const payPenaltyApi = (id) => {
+    return request.put(`/penalty/pay/${id}`)
+  }
+  export const getPenaltyByUserIdApi = (userId) => {
+    return request.get(`/penalty/getUser/${userId}`)
+  }

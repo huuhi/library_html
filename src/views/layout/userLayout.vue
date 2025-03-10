@@ -11,7 +11,7 @@ const centerDialogVisible = ref(false)
 const id=ref();
 const username=ref();
 const image=ref('');
-const messageCount=ref(0);
+const messageCount=ref();
 
 const showSidebar = computed(() => {
   return !route.path.startsWith('/message') // 根据路由路径判断
@@ -61,7 +61,7 @@ const onBack=()=>{
 const getMessageCount=async()=>{
   const res= await getUserMessageCount(id.value)
   messageCount.value=res.data;
-
+  console.log(messageCount.value)
 }
 
 
@@ -167,8 +167,8 @@ const resetForm = () => {
           </template>
           <template #extra>
             <div class="flex items-center justify-center">
-              <el-badge :value=messageCount :max="99" hidden="messageCount==0" class="item">
-                <el-button type="info" :icon="Message" circle  @click="toMessageView"/>
+              <el-badge :value="messageCount" :max="99" :hidden="messageCount === 0" class="item">
+                <el-button type="info" :icon="Message" circle @click="toMessageView"/>
               </el-badge>
               <el-button @click="pwdDialogVisible = true">修改密码</el-button>
               <el-button
@@ -191,7 +191,7 @@ const resetForm = () => {
               <el-icon><Reading /></el-icon>
               <span>首页</span>
             </el-menu-item>
-            <el-menu-item index="/post">
+            <el-menu-item index="/forum">
               <el-icon><Document /></el-icon>
               <span>帖子</span>
             </el-menu-item>

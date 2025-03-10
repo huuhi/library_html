@@ -150,7 +150,7 @@ const fetchBookDetails = async () => {
 // 获取评论列表
 const fetchComments = async () => {
   try {
-    const res = await getReviewApi(route.params.id, currentUserId.value)
+    const res = await getReviewApi(route.params.id, currentUserId.value,null)
     if (res.code === 1) {
       comments.value = res.data
       console.log("图片："+comments.value.image);

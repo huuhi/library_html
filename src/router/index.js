@@ -49,9 +49,24 @@ const userRoutes = [
         component: ()=>import("@/views/message/messageView.vue")
       },
       {
-        path:"/post",
-        name:"Post",
-        component: ()=>import("@/views/post/postView.vue")
+        path: "/forum",
+        name: "ForumList",
+        component: ()=>import("@/views/post/ForumList.vue"),
+      },
+      {
+        path: "/forum/post/:id",
+        name: "PostDetail",
+        component: ()=>import("@/views/post/postDetail.vue"),
+      },
+      {
+        path: "/forum/create",
+        name: "CreatePost",
+        component: ()=>import("@/views/post/postView.vue"),
+      },
+      {
+        path: "/forum/edit/:id",
+        name: "EditPost",
+        component: ()=>import("@/views/post/postView.vue"),
       }
     ]
   }

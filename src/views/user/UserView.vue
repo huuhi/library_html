@@ -57,64 +57,137 @@
       </el-col>
     </el-row>
 
-    <el-card class="borrowing-records-card">
-      <template #header>
-        <div class="card-header">
-          <span>借阅记录</span>
-          <el-select v-model="status" placeholder="选择状态" @change="fetchBorrowingRecords">
-            <el-option label="全部" value='' />
-            <el-option label="在借" value="1" />
-            <el-option label="已还" value="0" />
-          </el-select>
-        </div>
-      </template>
-      <el-table :data="borrowingRecords" style="width: 100%">
-        <el-table-column prop="bookName" label="书名" width="180/"/>
-        <el-table-column prop="lendTime" label="借阅时间" width="150" />
-        <el-table-column prop="mustReturnTime" label="应还时间" width="150" />
-        <el-table-column prop="returnTime" label="归还时间" width="150" />
-        <el-table-column prop="statusName" label="状态" width="100">
-          <template #default="scope">
-            <el-tag 
-              :type="{
-                0: 'warning',  // 已还
-                1: 'success',  // 在借
-                2: 'danger',   // 违规未还
-                3: 'info',     // 丢失
-                4: 'danger'    // 损坏
-              }[scope.row.status]"
-            >
-              {{ scope.row.statusName }}
-            </el-tag>
+    <el-tabs type="border-card" class="user-content-tabs">
+      <!-- 借阅记录标签页 -->
+      <el-tab-pane label="借阅记录">
+        <el-card class="records-card">
+          <template #header>
+            <div class="card-header">
+              <span>借阅记录</span>
+              <el-select v-model="status" placeholder="选择状态" @change="fetchBorrowingRecords">
+                <el-option label="全部" value='' />
+                <el-option label="在借" value="1" />
+                <el-option label="已还" value="0" />
+              </el-select>
+            </div>
           </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" @click="returnBook(scope.row)" :disabled="scope.row.status !== 1 &&scope.row.status!==2 " round>
-              还书
-            </el-button>
-            <el-button type="primary" @click="openQuestionForm(scope.row.id)" :disabled="scope.row.status === 1 || scope.row.status ===0" round>
-              申述
-            </el-button>
-            <el-button type="primary" @click="renewBorrowRecord(scope.row.id)" :disabled="scope.row.status !== 1 && scope.row.status !==2" round>
-              续借
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-container">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
-    </el-card>
+          <el-table 
+            :data="borrowingRecords" 
+            style="width: 100%"
+            height="calc(100vh - 400px)"
+          >
+            <el-table-column prop="bookName" label="书名" width="180/"/>
+            <el-table-column prop="lendTime" label="借阅时间" width="150" />
+            <el-table-column prop="mustReturnTime" label="应还时间" width="150" />
+            <el-table-column prop="returnTime" label="归还时间" width="150" />
+            <el-table-column prop="statusName" label="状态" width="100">
+              <template #default="scope">
+                <el-tag 
+                  :type="{
+                    0: 'warning',  // 已还
+                    1: 'success',  // 在借
+                    2: 'danger',   // 违规未还
+                    3: 'info',     // 丢失
+                    4: 'danger'    // 损坏
+                  }[scope.row.status]"
+                >
+                  {{ scope.row.statusName }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template #default="scope">
+                <el-button type="primary" @click="returnBook(scope.row)" :disabled="scope.row.status !== 1 &&scope.row.status!==2 " round>
+                  还书
+                </el-button>
+                <el-button type="primary" @click="openQuestionForm(scope.row.id)" :disabled="scope.row.status === 1 || scope.row.status ===0" round>
+                  申述
+                </el-button>
+                <el-button type="primary" @click="renewBorrowRecord(scope.row.id)" :disabled="scope.row.status !== 1 && scope.row.status !==2" round>
+                  续借
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination-container">
+            <el-pagination
+              v-model:current-page="currentPage"
+              v-model:page-size="pageSize"
+              :page-sizes="[10, 20, 50, 100]"
+              :total="total"
+              layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+            />
+          </div>
+        </el-card>
+      </el-tab-pane>
 
+      <!-- 新增帖子标签页 -->
+      <el-tab-pane label="我的帖子">
+        <el-card class="posts-card">
+          <el-table :data="userPosts" style="width: 100%">
+            <el-table-column prop="title" label="标题" width="200" />
+            <el-table-column prop="content" label="内容" show-overflow-tooltip />
+            <el-table-column prop="updatedTime" label="发布时间" width="180">
+              <template #default="{row}">
+                {{ formatDate(row.updatedTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120">
+              <template #default="{row}">
+                <el-button link type="primary" @click="viewPost(row.id)">查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination-container">
+            <el-pagination
+              v-model:current-page="currentPostPage"
+              v-model:page-size="postPageSize"
+              :page-sizes="[5, 10, 20]"
+              :total="totalPosts"
+              layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handlePostSizeChange"
+              @current-change="handlePostCurrentChange"
+            />
+          </div>
+        </el-card>
+      </el-tab-pane>
+
+      <!-- 新增罚款记录标签页 -->
+      <el-tab-pane label="罚款记录">
+        <el-card class="penalty-card">
+          <el-table :data="penaltyRecords" style="width: 100%">
+            <el-table-column prop="bookName" label="书籍名称" width="180" />
+            <el-table-column prop="penaltyAmount" label="罚款金额" width="120">
+              <template #default="{row}">
+                ￥{{ row.penaltyAmount.toFixed(2) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="statusName" label="状态" width="120">
+              <template #default="{row}">
+                <el-tag :type="row.status === 1 ? 'success' : 'danger'">
+                  {{ row.statusName }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="note" label="备注" show-overflow-tooltip />
+            <el-table-column label="操作" width="120">
+              <template #default="{row}">
+                <el-button 
+                  type="primary" 
+                  @click="payPenalty(row.id)"
+                  :disabled="row.status === 1"
+                  round
+                >
+                  缴纳
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </el-tab-pane>
+    </el-tabs>
 
     <el-dialog v-model="editDialogVisible" title="修改个人信息" width="50%">
       <el-form :model="editForm" :rules="rules" ref="ruleFormRef" label-width="120px">
@@ -198,7 +271,17 @@ import { getTotalBorrowed, getCurrentlyBorrowed, getBorrowingRecords,renewBorrow
 import parseJwt from '@/utils/parseJwt';
 import {lendBookApi} from '@/api/booksApi';
 import { addQuestionApi } from '@/api/questionApi';
+import {getPostListByUserIdApi } from '@/api/postApi';
+import { useRouter } from 'vue-router';
+import { getPenaltyByUserIdApi, payPenaltyApi } from '@/api/penaltyApi';
 
+const originalErrorHandler = window.onerror;
+window.onerror = function(message, source, lineno, colno, error) {
+  if (message.includes('ResizeObserver')) {
+    return true; // 阻止默认处理
+  }
+  return originalErrorHandler && originalErrorHandler.apply(this, arguments);
+};
 
 const userInfo = ref({});
 const totalBorrowed = ref(0);
@@ -218,8 +301,15 @@ const question=reactive({
   note:''
 })
 
+const currentPostPage = ref(1);
+const postPageSize = ref(5);
+const totalPosts = ref(0);
+const userPosts = ref([]);
 
-const userId=ref(); // This should be dynamically set based on the logged-in user
+const userId=ref(); 
+const router = useRouter();
+
+const penaltyRecords = ref([]);
 
 const fetchUserInfo = async () => {
   try {
@@ -372,13 +462,13 @@ const handleAvatarSuccess = (response, file) => {
 
 const beforeAvatarUpload = (file) => {
   const isJPG = file.type === 'image/jpeg';
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024  < 5;
 
   if (!isJPG) {
-    ElMessage.error('Avatar picture must be JPG format!');
+    ElMessage.error('必须上传jpg/png格式图片');
   }
   if (!isLt2M) {
-    ElMessage.error('Avatar picture size can not exceed 2MB!');
+    ElMessage.error('图片大小不能超过5MB');
   }
   return isJPG && isLt2M;
 };
@@ -430,6 +520,53 @@ const renewBorrowRecord=async(id)=>{
   }
 }
 
+const fetchUserPosts = async () => {
+  try {
+    const response = await getPostListByUserIdApi(userId.value);
+    if (response.code) {
+      userPosts.value = response.data;
+    }
+  } catch (error) {
+    ElMessage.error('获取帖子失败');
+  }
+};
+
+const handlePostSizeChange = (val) => {
+  postPageSize.value = val;
+  fetchUserPosts();
+};
+
+const handlePostCurrentChange = (val) => {
+  currentPostPage.value = val;
+  fetchUserPosts();
+};
+
+const viewPost = (postId) => {
+  router.push(`/forum/post/${postId}`);
+};
+
+const fetchPenaltyRecords = async () => {
+  try {
+    const response = await getPenaltyByUserIdApi(userId.value);
+    if (response.code === 1) {
+      penaltyRecords.value = response.data;
+    }
+  } catch (error) {
+    ElMessage.error('获取罚款记录失败');
+  }
+};
+
+const payPenalty = async (id) => {
+  try {
+    const response = await payPenaltyApi(id);
+    if (response.code === 1) {
+      ElMessage.success('缴纳成功');
+      await fetchPenaltyRecords();
+    }
+  } catch (error) {
+    ElMessage.error('缴纳失败');
+  }
+};
 
 onMounted(() => {
   const jwt=localStorage.getItem('user');
@@ -441,6 +578,8 @@ onMounted(() => {
   fetchTotalBorrowed();
   fetchCurrentlyBorrowed();
   fetchBorrowingRecords();
+  fetchUserPosts();
+  fetchPenaltyRecords();
 });
 </script>
 
@@ -508,6 +647,20 @@ onMounted(() => {
   height: 178px;
   display: block;
 }
+
+.user-content-tabs {
+  margin-top: 20px;
+}
+
+.records-card, .posts-card {
+  margin-top: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.penalty-card {
+  margin-top: 0;
+  border: none;
+  box-shadow: none;
+}
 </style>
-
-

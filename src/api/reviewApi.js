@@ -4,8 +4,14 @@ export const addReviewApi=(data)=>{
     return  request.post('/review/send',data);
 }
 
-export const getReviewApi=(bookId,userId)=>{
-    return request.get(`/review/get/${bookId}/${userId}`)
+export const getReviewApi = (bookId, userId, postId) => {
+    return request.get(`/review/get`, {
+        params: {
+            bookId,
+            userId,
+            postId
+        }
+    })
 }
 export const deleteReviewApi=(id)=>{
     return request.delete(`/review/delete/${id}`)
