@@ -139,7 +139,7 @@ const submitPwd = async () => {
 }
 const toMessageView=()=>{
   getMessageCount();
-  window.location.href = '/message'
+  window.location.href = '/messagetemp'
 
 }
 

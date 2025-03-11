@@ -67,6 +67,11 @@ const userRoutes = [
         path: "/forum/edit/:id",
         name: "EditPost",
         component: ()=>import("@/views/post/postView.vue"),
+      },
+      {
+        path: "/messagetemp",
+        name: "Message",
+        component: ()=>import("@/views/message/messageTemp.vue"),
       }
     ]
   }
