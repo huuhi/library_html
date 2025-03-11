@@ -3,7 +3,7 @@ import { ref, onMounted, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { searchBooksApi, addBookApi, updateBookApi, deleteBookApi } from '@/api/booksApi';
-import { getAllClazzApi } from '@/api/clazzApi';
+import { getAllClazzApi,getClazzApi } from '@/api/clazzApi';
 import { getPublishersApi } from '@/api/publishApi';
 import { getAddressApi } from '@/api/addressApi';
 
@@ -15,6 +15,7 @@ const dialogVisible = ref(false);
 const dialogTitle = ref('添加图书');
 const bookFormRef = ref(null);
 const categories = ref([]);
+const bossClazz = ref([]);
 const publishers = ref([]);
 const addresses = ref([]);
 const selectedCategory = ref('');
@@ -88,7 +89,14 @@ const handleCurrentChange = (val) => {
   currentPage.value = val;
   fetchBooks();
 };
-
+const fetchBossClazz = async () => {
+  const response = await getClazzApi();
+  if (response.code) {
+    bossClazz.value = response.data;
+  }else{
+    ElMessage.error('获取图书列表失败'+response.msg);
+  }
+}
 const showAddBookDialog = () => {
   dialogTitle.value = '添加图书';
   Object.keys(bookForm).forEach(key => bookForm[key] = '');
@@ -229,6 +237,7 @@ onMounted(() => {
   fetchCategories();
   fetchPublishers();
   fetchAddresses();
+  fetchBossClazz();
 });
 </script>
 
@@ -248,7 +257,7 @@ onMounted(() => {
           全部
         </el-tag>
         <el-tag 
-          v-for="category in categories" 
+          v-for="category in bossClazz" 
           :key="category.id"
           :class="{ 'active-tag': selectedCategory === category.id }"
           @click="handleCategoryClick(category.id)"

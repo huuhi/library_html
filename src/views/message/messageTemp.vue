@@ -56,34 +56,32 @@
 
       <!-- Message List -->
       <div class="message-list" v-loading="loading">
-        <TransitionGroup name="fade" tag="div">
-          <template v-if="activeType === 'system'">
-            <SystemMessage 
-              v-for="message in messages" 
-              :key="message.id" 
-              :message="message"
-              @showDetails="showSystemMessageDetails"
-            />
-          </template>
+        <template v-if="activeType === 'system'">
+          <SystemMessage 
+            v-for="message in messages" 
+            :key="`system-${message.id}`" 
+            :message="message"
+            @showDetails="showSystemMessageDetails"
+          />
+        </template>
 
-          <template v-else-if="activeType === 'likes'">
-            <LikeMessage 
-              v-for="message in messages" 
-              :key="message.id" 
-              :message="message"
-              @viewOriginal="viewOriginalContent"
-            />
-          </template>
+        <template v-else-if="activeType === 'likes'">
+          <LikeMessage 
+            v-for="message in messages" 
+            :key="`like-${message.id}`" 
+            :message="message"
+            @viewOriginal="viewOriginalContent"
+          />
+        </template>
 
-          <template v-else-if="activeType === 'comments'">
-            <CommentMessage 
-              v-for="message in messages" 
-              :key="message.id" 
-              :message="message"
-              @viewOriginal="viewOriginalContent"
-            />
-          </template>
-        </TransitionGroup>
+        <template v-else-if="activeType === 'comments'">
+          <CommentMessage 
+            v-for="message in messages" 
+            :key="`comment-${message.id}`" 
+            :message="message"
+            @viewOriginal="viewOriginalContent"
+          />
+        </template>
 
         <div v-if="!loading && messages.length === 0" class="empty-state">
           <el-empty description="暂无消息" />
@@ -147,6 +145,8 @@ const contentTitle = computed(() => {
 
 const fetchMessages = async () => {
   loading.value = true;
+  messages.value = [];
+  
   try {
     let response;
     switch (activeType.value) {
@@ -162,7 +162,7 @@ const fetchMessages = async () => {
     }
     
     if (response.code) {
-      messages.value = response.data;
+      messages.value = response.data || [];
     } else {
       ElMessage.error('获取消息失败');
     }
@@ -205,6 +205,7 @@ const markAllRead = () => {
 };
 
 watch(activeType, () => {
+  messages.value = [];
   fetchMessages();
 });
 

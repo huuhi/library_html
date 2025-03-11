@@ -150,6 +150,7 @@
   const route = useRoute();
   const router = useRouter();
   const formRef = ref(null);
+  const userId=ref(null);
   
   const isEditing = computed(() => route.params.id !== undefined);
   const postId = computed(() => isEditing.value ? parseInt(route.params.id) : null);
@@ -233,7 +234,7 @@
       const tagData = {
         name: newTagForm.value.name,
         themeColor: newTagForm.value.themeColor,
-        userId: newTagForm.value.userId
+        userId: userId.value
       };
       
       const response = await addTag(tagData);
@@ -355,7 +356,7 @@
     const jwt = localStorage.getItem('user');
     if (jwt) {
       const claim = parseJwt(jwt);
-      const userId = parseInt(claim.userId);
+      userId.value = claim.userId;
       postForm.value.userId = userId;
       newTagForm.value.userId = userId;
     }
